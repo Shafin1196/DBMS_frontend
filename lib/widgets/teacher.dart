@@ -32,6 +32,14 @@ class TeacherHomeScreen extends StatefulWidget {
 
 class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
 
+  void _overLay(){
+    showModalBottomSheet(
+        isScrollControlled: true,
+      context: context,
+       builder: (ctx)=>AddQuiz(userId: widget.user.user.id,),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,6 +52,7 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                SizedBox(width: 10),
                 CircleAvatar(
                   backgroundColor: Colors.yellow,
                   child: Icon(FontAwesomeIcons.userPen,size: 25,color: const Color.fromARGB(255, 10, 10, 8),),
@@ -67,6 +76,7 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
                   icon: Icon(FontAwesomeIcons.signOutAlt,size: 25,color: const Color.fromARGB(255, 10, 10, 8),),  
                 ),
                 ),
+                SizedBox(width: 10),
               ],
             ),
             Expanded(
@@ -109,12 +119,7 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
                   ListView.builder(
                     itemCount: widget.all_quiz.length,
                     itemBuilder: (context,index){
-                      return TextButton(onPressed: (){},
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.all(0),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                      ), 
-                      child: Card(
+                      return Card(
                         borderOnForeground: false,
                         elevation: 10,
                         margin: EdgeInsets.all(10),
@@ -122,7 +127,7 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                         child: ListTile(
                           title: Row( 
-                    
+              
                             children: [
                               Expanded(child: Text(widget.all_quiz[index].quizName,style: GoogleFonts.roboto(fontSize: 20,fontWeight: FontWeight.bold),)),
                             ],
@@ -137,15 +142,13 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
                           ),
                           trailing: IconButton(
                             onPressed: (){
-                              setState(() {
-                                widget.all_quiz.removeAt(index);
-                              });
+                              
                             },
-                            icon: Icon(Icons.delete,size: 30,color: Colors.amberAccent.shade700,),
+                            icon: Icon(FontAwesomeIcons.edit,size: 30,color: Colors.amberAccent.shade700,),
                           ),
                         ),
-                      )
                       );
+                      
                     },
                   ),
                 ), 
@@ -156,7 +159,7 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
-         
+          _overLay();
         },
         elevation: 10,
         autofocus: true,
