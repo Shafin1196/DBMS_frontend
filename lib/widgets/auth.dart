@@ -75,8 +75,10 @@ class _AuthState extends State<Auth> with SingleTickerProviderStateMixin {
       );
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
+        print("1");
         final LoginResponse loginResponse = LoginResponse.fromJson(responseData);
         _showError(loginResponse.message);
+        print("2");
         // Save user data locally
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('message', loginResponse.message);
@@ -84,7 +86,11 @@ class _AuthState extends State<Auth> with SingleTickerProviderStateMixin {
         await prefs.setString('user_name', loginResponse.user.name);
         await prefs.setString('user_email', loginResponse.user.email);
         await prefs.setString('user_status', loginResponse.user.status);
+        print("3");
+        await prefs.setInt('user_section', loginResponse.user.section);
+        print("4");
         List<Quiz> quizList = await ApiService.quizes(loginResponse.user.id);
+        print("5");
         
         // Navigate based on user role
         Navigator.pushReplacement(

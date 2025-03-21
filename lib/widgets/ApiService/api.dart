@@ -18,5 +18,21 @@ class ApiService {
       throw Exception('API Error: $error');
     }
   }
+
+  static Future<Teacher> teacher(int userId) async {
+    try {
+      final response = await http.get(
+        Uri.parse("https://shafin1196.pythonanywhere.com/api/all/teacher/$userId"),
+        headers: {"Content-Type": "application/json"},
+      );
+      if (response.statusCode == 200) {
+        return Teacher.fromJson(jsonDecode(response.body));
+      } else {
+        throw Exception('Failed to load teacher: ${response.statusCode}');
+      }
+    } catch (error) {
+      throw Exception('API Error: $error');
+    }
+  }
   
 }

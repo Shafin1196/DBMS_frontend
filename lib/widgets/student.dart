@@ -20,6 +20,7 @@ class StudentHomeScreen extends StatelessWidget {
               onPressed: () async {
                 final prefs = await SharedPreferences.getInstance();
                 await prefs.clear();
+                imageCache.clear();
                 Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Auth()));
               },
               child: Text("Log out"),

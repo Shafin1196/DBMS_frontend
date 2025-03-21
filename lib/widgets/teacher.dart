@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quiz_diu/widgets/add_quiz.dart';
 import 'package:quiz_diu/widgets/constrants.dart';
 import 'package:quiz_diu/widgets/quiz_models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -80,8 +81,33 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
                     ),
                     color: Colors.white,
                   ),
-                  child: ListView.builder(
-                    itemCount: dummy_quiz.length,
+                  child: widget.all_quiz.isEmpty ? Center(
+                    child:  Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(FontAwesomeIcons.solidMeh,size: 100,color: Colors.amberAccent.shade700,),
+                        Text("No Quiz Found",style: GoogleFonts.roboto(fontSize: 20,fontWeight: FontWeight.bold),),
+                        SizedBox(height: 30,),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("Click ",style: GoogleFonts.roboto(fontSize: 20,fontWeight: FontWeight.bold),),
+                            Container(
+                              padding: EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                color: ThemeData().colorScheme.scrim,
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: Icon(Icons.add,size: 30,color: Colors.amberAccent.shade700,),
+                            ),
+                            Text(" to add Quiz",style: GoogleFonts.roboto(fontSize: 20,fontWeight: FontWeight.bold),),
+                          ],
+                        )
+                      ],
+                    ),
+                  ):
+                  ListView.builder(
+                    itemCount: widget.all_quiz.length,
                     itemBuilder: (context,index){
                       return TextButton(onPressed: (){},
                       style: TextButton.styleFrom(
@@ -98,21 +124,21 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
                           title: Row( 
                     
                             children: [
-                              Expanded(child: Text(dummy_quiz[index].quizName,style: GoogleFonts.roboto(fontSize: 20,fontWeight: FontWeight.bold),)),
+                              Expanded(child: Text(widget.all_quiz[index].quizName,style: GoogleFonts.roboto(fontSize: 20,fontWeight: FontWeight.bold),)),
                             ],
 
                           ),
                           subtitle: Row(
                             children: [
-                              Expanded(child: Text(dummy_quiz[index].course_name,style: cardTextStyle,)),
+                              Expanded(child: Text(widget.all_quiz[index].course.courseName,style: cardTextStyle,)),
                               Spacer(),
-                              Expanded(child: Text(dummy_quiz[index].section_name,style: cardTextStyle,)),
+                              Expanded(child: Text(widget.all_quiz[index].section.sectionName,style: cardTextStyle,)),
                             ],
                           ),
                           trailing: IconButton(
                             onPressed: (){
                               setState(() {
-                                dummy_quiz.removeAt(index);
+                                widget.all_quiz.removeAt(index);
                               });
                             },
                             icon: Icon(Icons.delete,size: 30,color: Colors.amberAccent.shade700,),
@@ -129,13 +155,15 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: (){},
+        onPressed: (){
+         
+        },
         elevation: 10,
         autofocus: true,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         focusColor: Colors.amberAccent,
 
-        backgroundColor: ThemeData().colorScheme.onSecondary,
+        backgroundColor: ThemeData().colorScheme.scrim,
           child: Icon(
           Icons.add,
           color: Colors.amberAccent.shade700,
