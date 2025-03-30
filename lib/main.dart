@@ -14,7 +14,8 @@ class App extends StatelessWidget{
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: "Diu Quiz",theme: ThemeData().copyWith(
+      title: "Diu Quiz",
+      theme: ThemeData().copyWith(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
         seedColor:const Color.fromARGB(255, 44, 5, 140),

@@ -39,7 +39,7 @@ class _QuestionCardState extends State<QuestionCard> {
               Text(
                 widget.quizQuestion.question,
                 style: GoogleFonts.roboto(
-                    fontSize: 30, fontWeight: FontWeight.bold),
+                    fontSize: 20, fontWeight: FontWeight.bold),
               ),
               ...widget.quizQuestion.quizQuestionAnswers
                   .asMap()
@@ -67,24 +67,27 @@ class _QuestionCardState extends State<QuestionCard> {
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Display the serial
                         Text(
                           "$serial. ",
                           style: GoogleFonts.roboto(
-                              fontSize: 20,
+                              fontSize: 15,
                               color: Colors.black,
                               fontWeight: FontWeight.bold),
                         ),
                         // Display the answer text
-                        Text(
-                          answer.answer,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 4,
-                          style: GoogleFonts.roboto(
-                              color: Colors.black,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold),
+                        Expanded(
+                          child: Text(
+                            answer.answer,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 4,
+                            style: GoogleFonts.roboto(
+                                color: Colors.black,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold),
+                          ),
                         ),
                       ],
                     ),

@@ -71,6 +71,7 @@ class _AddAnswersState extends State<AddAnswers> {
                   Navigator.pop(context);
 
                 }, child: Text("Add")),
+                SizedBox(width: 30,),
                 ElevatedButton(onPressed: (){
                   Navigator.pop(context);
                 }, child: Text("Cancel"))

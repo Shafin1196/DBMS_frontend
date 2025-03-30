@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:quiz_diu/widgets/ApiService/api.dart';
@@ -25,11 +26,13 @@ class _StudentState extends State<StudentHomeScreen> {
   void initState(){
     super.initState();
     all_quiz=widget.all_quiz;
+    all_quiz.sort((a,b)=>b.startTime.compareTo(a.startTime));
   }
   void refresh() async {
     final quizzes = await ApiService.quizes(widget.user);
     setState(() {
       all_quiz = quizzes;
+      all_quiz.sort((a,b)=>b.startTime.compareTo(a.startTime));
     });
   }
   @override
@@ -50,9 +53,14 @@ class _StudentState extends State<StudentHomeScreen> {
                   child: Icon(Icons.person, size: 25, color: const Color.fromARGB(255, 10, 10, 8)),
                 ),
                 SizedBox(width: 5),
-                Text((widget.user.user.name),
-                    style: GoogleFonts.permanentMarker(fontSize: 25,fontWeight: FontWeight.bold),
-                  ),
+                Expanded(
+                  flex: 8,
+                  child: Text((widget.user.user.name),
+                      style: GoogleFonts.permanentMarker(fontSize: 25,fontWeight: FontWeight.bold),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    ),
+                ),
                 Spacer(),
                 CircleAvatar(
                   backgroundColor: Colors.yellow,
@@ -90,7 +98,9 @@ class _StudentState extends State<StudentHomeScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(FontAwesomeIcons.solidFaceGrin,size: 100,color: Colors.amberAccent.shade700,),
-                        Text("There is no quiz for you!!",style: GoogleFonts.roboto(fontSize: 20,fontWeight: FontWeight.bold),),
+                        Text("There is no quiz for you!!",style: GoogleFonts.roboto(fontSize: 20,fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
+                        ),
                         SizedBox(height: 30,),
                         
                       ],
@@ -162,9 +172,10 @@ class _StudentState extends State<StudentHomeScreen> {
                           )
                           //result button
                           :ElevatedButton(onPressed: ()async{
-                                 
-                            final data=await ApiService.getResult(widget.user.user.id, widget.all_quiz[index].quizId);
+                            print("qq-${widget.all_quiz[index].quizId}");
 
+                            final data=await ApiService.getResult(widget.user.user.id, widget.all_quiz[index].quizId);
+                            print(data);
                             Navigator.push(context, MaterialPageRoute(builder: (context)=>ResultScreen(data: data,totalMarks: widget.all_quiz[index].quiz_marks,)
                             ));
                            
@@ -181,7 +192,9 @@ class _StudentState extends State<StudentHomeScreen> {
                           ),
                           )
                         ),
-                      );
+                      ).animate()
+    .fadeIn(duration: 500.ms, curve: Curves.easeIn) // Fade-in animation
+    .slide(begin: Offset(1, 0), end: Offset(0, 0), duration: 500.ms); // Slide-in from right
                       
                     },
                   ),

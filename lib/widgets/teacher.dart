@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:quiz_diu/widgets/add_quiz.dart';
 import 'package:quiz_diu/widgets/constrants.dart';
 import 'package:quiz_diu/widgets/editQuiz.dart';
@@ -33,6 +34,12 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
        builder: (ctx)=>AddQuiz(userId: widget.user.user.id,addQuiz: _addQuiz,teacher: widget.teacher,all_quiz: widget.all_quiz,),
     );
   }
+  @override
+void initState() {
+  super.initState();
+  
+  widget.all_quiz.sort((a, b) => b.startTime.compareTo(a.startTime));
+}
 
   @override
   Widget build(BuildContext context) {
@@ -153,7 +160,9 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
                             icon: Icon(FontAwesomeIcons.edit,size: 30,color: Colors.amberAccent.shade700,),
                           ),
                         ),
-                      );
+                      ).animate()
+    .fadeIn(duration: 500.ms, curve: Curves.easeIn) // Fade-in animation
+    .slide(begin: Offset(1, 0), end: Offset(0, 0), duration: 500.ms); 
                       
                     },
                   ),

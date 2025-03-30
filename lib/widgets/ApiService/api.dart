@@ -185,8 +185,10 @@ class ApiService {
       throw Exception('API Error: $error');
     }
   }
-
+//get result
   static Future<dynamic> getResult(int studentId, int quizId) async {
+    print("s-id:${studentId}");
+    print("q-id${quizId}");
     try {
       final response = await http.get(
         Uri.parse(
