@@ -8,6 +8,7 @@ class Quiz {
   final Section section;
   final List<QuizQuestion> quizQuestions;
   final String quizName;
+  final int? quiz_marks;
   final DateTime startTime;
   final DateTime endTime;
 
@@ -20,6 +21,7 @@ class Quiz {
     required this.quizName,
     required this.startTime,
     required this.endTime,
+    this.quiz_marks,
   });
 
   factory Quiz.fromJson(Map<String, dynamic> json) {
@@ -32,8 +34,9 @@ class Quiz {
           .map((q) => QuizQuestion.fromJson(q))
           .toList(),
       quizName: json['quiz_name'],
-      startTime: DateTime.parse(json['start_time']),
-      endTime: DateTime.parse(json['end_time']),
+      startTime: DateTime.parse(json['start_time']).subtract(Duration(hours: 6)),
+      endTime: DateTime.parse(json['end_time']).subtract(Duration(hours: 6)),
+      quiz_marks: json['quiz_marks'],
     );
   }
 
@@ -216,4 +219,115 @@ class QuizAnswer {
 List<Quiz> parseQuizzes(String responseBody) {
   final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
   return parsed.map<Quiz>((json) => Quiz.fromJson(json)).toList();
+}
+
+class CreateQuiz{
+  final String quizName;
+  final int course;
+  final int teacher;
+  final int section;
+  final int? totalMarks;
+  final String startTime;
+  final String endTime;
+
+    CreateQuiz({
+    required this.quizName,
+    required this.course,
+    required this.teacher,
+    required this.section,
+    required this.startTime,
+    required this.endTime,
+    this.totalMarks, // Optional
+  });
+
+  // Convert the object to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'quiz_name': quizName,
+      'course': course,
+      'teacher': teacher,
+      'section': section,
+      'start_time': startTime,
+      'end_time': endTime,
+      'quiz_marks': totalMarks, // Include quizMarks if provided
+    };
+  }
+
+
+}
+class CreateQuestion{
+  final String question;
+  final int quiz;
+
+  CreateQuestion({
+    required this.question,
+    required this.quiz,
+  });
+
+  // Convert the object to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'question': question,
+      'quiz': quiz,
+    };
+  }
+}
+class CreateAnswer{
+  final String answer;
+  final bool isCorrect;
+  final int question;
+
+  CreateAnswer({
+    required this.answer,
+    required this.isCorrect,
+    required this.question,
+  });
+
+  // Convert the object to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'answer': answer,
+      'is_correct': isCorrect,
+      'question': question,
+    };
+  }
+}
+
+// result class
+class Result {
+  final int quiz;
+  final int student;
+  final int numberOfQuestions;
+  final int numberOfCorrectAnswers;
+  final double achievedMarks;
+
+  Result({
+    required this.quiz,
+    required this.student,
+    required this.numberOfQuestions,
+    required this.numberOfCorrectAnswers,
+    required this.achievedMarks,
+  });
+
+  // Factory constructor to create a Result object from JSON
+  factory Result.fromJson(Map<String, dynamic> json) {
+    return Result(
+      quiz: json['quiz'],
+      student: json['Student'],
+      numberOfQuestions: json['numberOfQuestions'],
+      numberOfCorrectAnswers: json['numberOfCorrectAnswers'],
+      achievedMarks: (json['achievedMarks'] as num).toDouble(),
+    );
+  }
+
+  // Method to convert a Result object to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'quiz': quiz,
+      'Student': student,
+      'numberOfQuestions': numberOfQuestions,
+      'numberOfCorrectAnswers': numberOfCorrectAnswers,
+      'achievedMarks':double.parse(achievedMarks.toStringAsFixed(2)),
+    };
+  }
 }

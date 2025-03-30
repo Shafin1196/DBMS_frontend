@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ class _AuthState extends State<Auth> with SingleTickerProviderStateMixin {
   final _emailControl = TextEditingController();
   final _passControl = TextEditingController();
   bool isLoading = false;
+  bool _isPasswordrdVisible = false;
   late AnimationController _controller;
   late Animation<double> _opacityAnimation;
   late Animation<Offset> _slideAnimation;
@@ -86,16 +88,24 @@ class _AuthState extends State<Auth> with SingleTickerProviderStateMixin {
         await prefs.setString('user_status', loginResponse.user.status);
         await prefs.setInt('user_section', loginResponse.user.section);
         List<Quiz> quizList = await ApiService.quizes(loginResponse);
-        // Navigate based on user role
-        Navigator.pushReplacement(
-          // ignore: use_build_context_synchronously
-          context,
-          MaterialPageRoute(
-            builder: (context) => loginResponse.user.status == "Teacher"
-                ? TeacherHomeScreen(user: loginResponse, all_quiz: quizList,)
-                : StudentHomeScreen(user: loginResponse, all_quiz: quizList,),
-          ),
-        );
+        if(loginResponse.user.status=="Teacher"){
+          final Teacher teacher = await ApiService.teacher(loginResponse.user.id);
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => TeacherHomeScreen(user: loginResponse, all_quiz: quizList, teacher: teacher),
+            ),
+          );
+        }
+        else if(loginResponse.user.status=="Student"){
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => StudentHomeScreen(user: loginResponse, all_quiz: quizList),
+            ),
+          );
+        }
+        
       } else {
         _showError("Invalid email or password!");
       }
@@ -175,7 +185,7 @@ class _AuthState extends State<Auth> with SingleTickerProviderStateMixin {
                             SizedBox(height: 16),
                             TextFormField(
                               controller: _passControl,
-                              obscureText: true,
+                              obscureText: !_isPasswordrdVisible,
                               decoration: InputDecoration(
                                 label: Text(
                                   "Password",
@@ -184,6 +194,18 @@ class _AuthState extends State<Auth> with SingleTickerProviderStateMixin {
                                     fontSize: 15,
                                     fontWeight: FontWeight.bold,
                                   ),
+                                ),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _isPasswordrdVisible
+                                        ? FontAwesomeIcons.eye
+                                        : FontAwesomeIcons.eyeSlash,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _isPasswordrdVisible = !_isPasswordrdVisible;
+                                    });
+                                  },
                                 ),
                               ),
                             ),

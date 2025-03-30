@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:quiz_diu/widgets/ApiService/api.dart';
 import 'package:quiz_diu/widgets/constrants.dart';
 import 'package:quiz_diu/widgets/models.dart';
+import 'package:quiz_diu/widgets/quiz.dart';
 import 'package:quiz_diu/widgets/quiz_models.dart';
+import 'package:quiz_diu/widgets/studentResult.dart';
+import 'package:quiz_diu/widgets/timer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:quiz_diu/widgets/auth.dart';
 
@@ -16,6 +20,18 @@ class StudentHomeScreen extends StatefulWidget {
 }
 
 class _StudentState extends State<StudentHomeScreen> {
+  List<Quiz>all_quiz=[];
+  @override
+  void initState(){
+    super.initState();
+    all_quiz=widget.all_quiz;
+  }
+  void refresh() async {
+    final quizzes = await ApiService.quizes(widget.user);
+    setState(() {
+      all_quiz = quizzes;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,33 +85,19 @@ class _StudentState extends State<StudentHomeScreen> {
                     ),
                     color: Colors.white,
                   ),
-                  child: widget.all_quiz.isEmpty ? Center(
+                  child: all_quiz.isEmpty ? Center(
                     child:  Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(FontAwesomeIcons.solidMeh,size: 100,color: Colors.amberAccent.shade700,),
-                        Text("No Quiz Found",style: GoogleFonts.roboto(fontSize: 20,fontWeight: FontWeight.bold),),
+                        Icon(FontAwesomeIcons.solidFaceGrin,size: 100,color: Colors.amberAccent.shade700,),
+                        Text("There is no quiz for you!!",style: GoogleFonts.roboto(fontSize: 20,fontWeight: FontWeight.bold),),
                         SizedBox(height: 30,),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text("Click ",style: GoogleFonts.roboto(fontSize: 20,fontWeight: FontWeight.bold),),
-                            Container(
-                              padding: EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                color: ThemeData().colorScheme.scrim,
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              child: Icon(Icons.add,size: 30,color: Colors.amberAccent.shade700,),
-                            ),
-                            Text(" to add Quiz",style: GoogleFonts.roboto(fontSize: 20,fontWeight: FontWeight.bold),),
-                          ],
-                        )
+                        
                       ],
                     ),
                   ):
                   ListView.builder(
-                    itemCount: widget.all_quiz.length,
+                    itemCount: all_quiz.length,
                     itemBuilder: (context,index){
                       return Card(
                         borderOnForeground: false,
@@ -107,23 +109,77 @@ class _StudentState extends State<StudentHomeScreen> {
                           title: Row( 
               
                             children: [
-                              Expanded(child: Text(widget.all_quiz[index].quizName,style: GoogleFonts.roboto(fontSize: 20,fontWeight: FontWeight.bold),)),
+                              Expanded(child: Text(all_quiz[index].quizName,style: GoogleFonts.roboto(fontSize: 20,fontWeight: FontWeight.bold),
+                              
+                              )),
                             ],
 
                           ),
                           subtitle: Row(
                             children: [
-                              Expanded(child: Text(widget.all_quiz[index].course.courseName,style: cardTextStyle,)),
+                              Expanded(child: Text(all_quiz[index].course.courseName,style: cardTextStyle,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                              )),
                               Spacer(),
-                              Expanded(child: Text(widget.all_quiz[index].section.sectionName,style: cardTextStyle,)),
+                              Expanded(child: Text(all_quiz[index].section.sectionName,style: cardTextStyle,)),
                             ],
                           ),
-                          trailing: IconButton(
-                            onPressed: (){
-                              
-                            },
-                            icon: Icon(FontAwesomeIcons.arrowRight,size: 30,color: Colors.amberAccent.shade700,),
+                          trailing: all_quiz[index].startTime.isAfter(DateTime.now())?
+                          // starts in
+                          ElevatedButton(onPressed: (){
+                            
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: ThemeData().colorScheme.scrim,
+                          ), 
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(FontAwesomeIcons.clock,color: Colors.white,),
+                              TimeRemainingPage(endTime: all_quiz[index].endTime,onText: TimerOnButtonTextStyle,),
+                            ],
                           ),
+
+                          )
+                          //start button
+                          :(all_quiz[index].startTime.isBefore(DateTime.now())&& all_quiz[index].endTime.isAfter(DateTime.now()))?ElevatedButton(onPressed: (){
+                              Navigator.push(context,
+                              MaterialPageRoute(builder: (context) => QuizScreen(quiz:all_quiz[index] ,user_id: widget.user.user.id,))
+                              );
+                          }, 
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: ThemeData().colorScheme.scrim,
+                          ), 
+
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text("Start",style: GoogleFonts.roboto(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
+                              Icon(FontAwesomeIcons.arrowRight,color: Colors.white,),
+                            ],
+                          ),
+                          )
+                          //result button
+                          :ElevatedButton(onPressed: ()async{
+                                 
+                            final data=await ApiService.getResult(widget.user.user.id, widget.all_quiz[index].quizId);
+
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>ResultScreen(data: data,totalMarks: widget.all_quiz[index].quiz_marks,)
+                            ));
+                           
+                          }, 
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: ThemeData().colorScheme.scrim,
+                          ), 
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text("Results",style: GoogleFonts.roboto(color: Colors.white,fontSize: 15,fontWeight: FontWeight.bold),),
+                              Icon(FontAwesomeIcons.trophy,color: Colors.white,),
+                            ],
+                          ),
+                          )
                         ),
                       );
                       
@@ -133,6 +189,16 @@ class _StudentState extends State<StudentHomeScreen> {
               ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: refresh,
+         backgroundColor: Colors.black12,
+      focusElevation: 10,
+      autofocus: true,
+      elevation: 6,
+      hoverElevation: 10,
+      hoverColor: Colors.red,
+        child: Icon(FontAwesomeIcons.refresh,color: Colors.amber.shade700,),
       ),
     );
   }

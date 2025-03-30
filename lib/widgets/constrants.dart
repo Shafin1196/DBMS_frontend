@@ -6,3 +6,14 @@ var cardTextStyle = GoogleFonts.roboto(
   fontWeight: FontWeight.w500,
   color: Colors.black,
 );
+
+var TimerOnTopTextStyle=GoogleFonts.permanentMarker(
+  fontSize: 25,
+  fontWeight: FontWeight.bold,
+  color:Colors.red,
+);
+var TimerOnButtonTextStyle=GoogleFonts.roboto(
+  fontSize: 15,
+  fontWeight: FontWeight.bold,
+  color:Colors.white,
+);

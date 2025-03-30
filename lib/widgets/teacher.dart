@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:quiz_diu/widgets/add_quiz.dart';
 import 'package:quiz_diu/widgets/constrants.dart';
+import 'package:quiz_diu/widgets/editQuiz.dart';
 import 'package:quiz_diu/widgets/quiz_models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:quiz_diu/widgets/auth.dart';
@@ -8,35 +9,28 @@ import 'package:quiz_diu/widgets/models.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-List<DQuiz> dummy_quiz = [
-  DQuiz(id: 1, quizName: "dbms", course_name: "DataBaseManagement ", section_name: "64_C", start_time:  DateTime.now(), end_time: DateTime.now().add(Duration(hours: 1))),
-  DQuiz(id: 2, quizName: "dbms2", course_name: "DataBaseManagement", section_name: "64_C", start_time:  DateTime.now(), end_time: DateTime.now().add(Duration(hours: 1))),
-  DQuiz(id: 3, quizName: "dbms3", course_name: "DataBaseManagement", section_name: "64_C", start_time:  DateTime.now(), end_time: DateTime.now().add(Duration(hours: 1))),
-  DQuiz(id: 4, quizName: "dbms4", course_name: "DataBaseManagement", section_name: "64_C", start_time:  DateTime.now(), end_time: DateTime.now().add(Duration(hours: 1))),
-  DQuiz(id: 5, quizName: "dbms5", course_name: "DataBaseManagement", section_name: "64_C", start_time:  DateTime.now(), end_time: DateTime.now().add(Duration(hours: 1))),
-  DQuiz(id: 6, quizName: "dbms6", course_name: "DataBaseManagement", section_name: "64_C", start_time:  DateTime.now(), end_time: DateTime.now().add(Duration(hours: 1))),
-  DQuiz(id: 7, quizName: "dbms7", course_name: "DataBaseManagement", section_name: "64_C", start_time:  DateTime.now(), end_time: DateTime.now().add(Duration(hours: 1))),
-  DQuiz(id: 8, quizName: "dbms8", course_name: "DataBaseManagement", section_name: "64_C", start_time:  DateTime.now(), end_time: DateTime.now().add(Duration(hours: 1))),
-  DQuiz(id: 9, quizName: "dbms9", course_name: "DataBaseManagement", section_name: "64_C", start_time:  DateTime.now(), end_time: DateTime.now().add(Duration(hours: 1))),
-  DQuiz(id: 10, quizName: "dbms10", course_name: "DataBaseManagement", section_name: "64_C", start_time:  DateTime.now(), end_time: DateTime.now().add(Duration(hours: 1))),
-  DQuiz(id: 11, quizName: "dbms11", course_name: "DataBaseManagement", section_name: "64_C", start_time:  DateTime.now(), end_time: DateTime.now().add(Duration(hours: 1))),
-  DQuiz(id: 12, quizName: "dbms12", course_name: "DataBaseManagement", section_name: "64_C", start_time:  DateTime.now(), end_time: DateTime.now().add(Duration(hours: 1))),
-];
 class TeacherHomeScreen extends StatefulWidget {
-  const TeacherHomeScreen({super.key,required this.user,required this.all_quiz});
+  const TeacherHomeScreen({super.key,required this.user,required this.all_quiz,required this.teacher});
   final LoginResponse user;
+  final Teacher teacher;
   final List<Quiz> all_quiz;
+  
   @override
   State<TeacherHomeScreen> createState() => _TeacherHomeScreenState();
 }
 
 class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
-
+  void _addQuiz(Quiz quiz){
+    setState(() {
+      widget.all_quiz.add(quiz);
+    });
+    
+  }
   void _overLay(){
     showModalBottomSheet(
         isScrollControlled: true,
       context: context,
-       builder: (ctx)=>AddQuiz(userId: widget.user.user.id,),
+       builder: (ctx)=>AddQuiz(userId: widget.user.user.id,addQuiz: _addQuiz,teacher: widget.teacher,all_quiz: widget.all_quiz,),
     );
   }
 
@@ -51,6 +45,7 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(width: 10),
                 CircleAvatar(
@@ -58,8 +53,13 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
                   child: Icon(FontAwesomeIcons.userPen,size: 25,color: const Color.fromARGB(255, 10, 10, 8),),
                 ),
                 SizedBox(width: 5,),
-                Text(widget.user.user.name,
-                  style: GoogleFonts.permanentMarker(fontSize: 25,fontWeight: FontWeight.bold),
+                Expanded(
+                  flex: 6,
+                  child: Text(widget.user.user.name,
+                    style: GoogleFonts.permanentMarker(fontSize: 25,fontWeight: FontWeight.bold),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
                 ),
                 Spacer(),
                 CircleAvatar(
@@ -105,7 +105,7 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
                             Container(
                               padding: EdgeInsets.all(5),
                               decoration: BoxDecoration(
-                                color: ThemeData().colorScheme.scrim,
+                                color: Colors.black12,
                                 borderRadius: BorderRadius.circular(15),
                               ),
                               child: Icon(Icons.add,size: 30,color: Colors.amberAccent.shade700,),
@@ -135,13 +135,19 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
                           ),
                           subtitle: Row(
                             children: [
-                              Expanded(child: Text(widget.all_quiz[index].course.courseName,style: cardTextStyle,)),
+                              Expanded(child: Text(widget.all_quiz[index].course.courseName,style: cardTextStyle,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                              )),
                               Spacer(),
                               Expanded(child: Text(widget.all_quiz[index].section.sectionName,style: cardTextStyle,)),
                             ],
                           ),
                           trailing: IconButton(
                             onPressed: (){
+                              Navigator.push(context,
+                              MaterialPageRoute(builder: (context) => EditQuiz(quiz: widget.all_quiz[index],))
+                              );
                               
                             },
                             icon: Icon(FontAwesomeIcons.edit,size: 30,color: Colors.amberAccent.shade700,),
@@ -157,22 +163,27 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: (){
-          _overLay();
-        },
-        elevation: 10,
+      floatingActionButton: SizedBox(
+        height: 40,
+        width: 40,
+        child: FloatingActionButton(
+          onPressed: (){
+            _overLay();
+          },
+        
+        backgroundColor: Colors.black12,
+        focusElevation: 10,
         autofocus: true,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        focusColor: Colors.amberAccent,
-
-        backgroundColor: ThemeData().colorScheme.scrim,
-          child: Icon(
-          Icons.add,
-          color: Colors.amberAccent.shade700,
-          size: 40,
-          ),
-
+        elevation: 6,
+        hoverElevation: 10,
+        hoverColor: Colors.red,
+            child: Icon(
+            Icons.add,
+            color: Colors.amberAccent.shade700,
+            size: 40,
+            ),
+        
+        ),
       ),
     );
   }

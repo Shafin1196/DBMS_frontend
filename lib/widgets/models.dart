@@ -32,19 +32,3 @@ class User {
   }
 }
 
-class DQuiz {
-  final int id;
-  final String quizName;
-  final String course_name;
-  final String section_name;
-  final DateTime start_time;
-  final DateTime end_time;
-  const DQuiz({
-    required this.id,
-    required this.quizName,
-    required this.course_name,
-    required this.section_name,
-    required this.start_time,
-    required this.end_time,
-  });
-}
