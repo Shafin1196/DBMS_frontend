@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:quiz_diu/widgets/ApiService/api.dart';
 import 'package:quiz_diu/widgets/quiz_models.dart';
 
@@ -49,6 +50,42 @@ class _AddQuizState extends State<AddQuiz> {
             controller.text = fullDateTime.toString(); // You can format this as needed
       }
     }
+  }
+  void showError(String message) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Alert!',
+        style: GoogleFonts.permanentMarker(color: Colors.red,fontSize: 35,fontWeight: FontWeight.bold),
+        textAlign: TextAlign.center,
+        ),
+        content: Text(message,
+        style: GoogleFonts.roboto(color: Colors.black,fontSize: 25,fontWeight: FontWeight.bold),
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+            },
+            child: Text('OK'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+  bool isValid() {
+    if (_quizName.text.isEmpty ||
+        _selectedCourse == null ||
+        _selectedSection == null ||
+        _totalMarks.text.isEmpty ||
+        _startTime.text.isEmpty ||
+        _endTime.text.isEmpty) {
+      return false;
+    }
+    return true;
   }
   @override
   Widget build(BuildContext context) {
@@ -160,6 +197,8 @@ class _AddQuizState extends State<AddQuiz> {
             children: [
               ElevatedButton(
                 onPressed: () async {
+                  print(isValid());
+                  if(isValid()){
                   final newQuiz = Quiz(
                     quizId: await ApiService.getQuizId(),
                     quizName: _quizName.text,
@@ -175,6 +214,10 @@ class _AddQuizState extends State<AddQuiz> {
                   ApiService.createQuiz(createQuiz);
                   widget.addQuiz(newQuiz);
                   Navigator.of(context).pop();
+                  }
+                  else{
+                    showError("All fields are required!");
+                  }
                 },
                 child: Text("Add Quiz"),
               ),

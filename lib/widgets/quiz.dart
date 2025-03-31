@@ -141,6 +141,7 @@ class _QuizScreenState extends State<QuizScreen> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             CircleAvatar(
+                              radius: 14,
                               backgroundColor: Colors.grey.shade400,
                               child: Text(
                                 (index + 1).toString(),

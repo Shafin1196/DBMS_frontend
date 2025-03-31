@@ -32,7 +32,7 @@ class _StudentState extends State<StudentHomeScreen> {
     final quizzes = await ApiService.quizes(widget.user);
     setState(() {
       all_quiz = quizzes;
-      all_quiz.sort((a,b)=>b.startTime.compareTo(a.startTime));
+      all_quiz.sort((a,b)=>b.quizId.compareTo(a.quizId));
     });
   }
   @override
@@ -172,10 +172,7 @@ class _StudentState extends State<StudentHomeScreen> {
                           )
                           //result button
                           :ElevatedButton(onPressed: ()async{
-                            print("qq-${widget.all_quiz[index].quizId}");
-
                             final data=await ApiService.getResult(widget.user.user.id, widget.all_quiz[index].quizId);
-                            print(data);
                             Navigator.push(context, MaterialPageRoute(builder: (context)=>ResultScreen(data: data,totalMarks: widget.all_quiz[index].quiz_marks,)
                             ));
                            

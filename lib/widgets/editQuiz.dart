@@ -108,6 +108,7 @@ class _EditQuizState extends State<EditQuiz> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 CircleAvatar(
+                                  radius: 14,
                                   backgroundColor: Colors.grey.shade400,
                                   child: Text(
                                     (index + 1).toString(),

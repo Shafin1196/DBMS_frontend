@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:quiz_diu/widgets/ApiService/api.dart';
 import 'package:quiz_diu/widgets/quiz_models.dart';
 
@@ -20,10 +21,49 @@ class AddAnswers extends StatefulWidget {
 
 class _AddAnswersState extends State<AddAnswers> {
   final _answer = TextEditingController();
-  String _isCorrect="False";
+  String _isCorrect = "False";
+  void showError(message) {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Text(
+                'Alert!',
+                style: GoogleFonts.permanentMarker(
+                    color: Colors.red,
+                    fontSize: 35,
+                    fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              content: Text(
+                message,
+                style: GoogleFonts.roboto(
+                    color: Colors.black,
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold),
+              ),
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            ));
+  }
+
+  bool isValid() {
+    if (_answer.text.isEmpty) {
+      return false;
+    }
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final List<String> isTrue=["True","False"];
+  final bool hasTrueAnswer = widget.question.quizQuestionAnswers.any((answer) => answer.isCorrect);
+  // Set the isTrue list based on the condition
+  final List<String> isTrue = hasTrueAnswer ? ["False"] : ["True", "False"];
     return Container(
       padding: EdgeInsets.all(20),
       child: Column(
@@ -37,7 +77,9 @@ class _AddAnswersState extends State<AddAnswers> {
               border: OutlineInputBorder(),
             ),
           ),
-          SizedBox(height: 10,),
+          SizedBox(
+            height: 10,
+          ),
           DropdownButtonFormField<String>(
             value: _isCorrect,
             items: isTrue.map((String value) {
@@ -56,27 +98,42 @@ class _AddAnswersState extends State<AddAnswers> {
               border: OutlineInputBorder(),
             ),
           ),
-          SizedBox(height: 20,),
-           Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(onPressed: ()async{
-                  print("1");
-                  final quizAnswer=QuizAnswer(answerId: await ApiService.getAnswerId(), answer: _answer.text, isCorrect: _isCorrect=="True"?true:false, question: widget.question.questionId);
-                  print("2");
-                  widget.addAnswer(quizAnswer,widget.index);
-
-                  final createAnswers=CreateAnswer(answer: _answer.text, isCorrect: _isCorrect=="True"?true:false, question: widget.question.questionId);
-                  ApiService.createAnswer(createAnswers);
-                  Navigator.pop(context);
-
-                }, child: Text("Add")),
-                SizedBox(width: 30,),
-                ElevatedButton(onPressed: (){
-                  Navigator.pop(context);
-                }, child: Text("Cancel"))
-
-              ],
+          SizedBox(
+            height: 20,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                  onPressed: () async {
+                    print(isValid());
+                    if (isValid()) {
+                      final quizAnswer = QuizAnswer(
+                          answerId: await ApiService.getAnswerId(),
+                          answer: _answer.text,
+                          isCorrect: _isCorrect == "True" ? true : false,
+                          question: widget.question.questionId);
+                      widget.addAnswer(quizAnswer, widget.index);
+                      final createAnswers = CreateAnswer(
+                          answer: _answer.text,
+                          isCorrect: _isCorrect == "True" ? true : false,
+                          question: widget.question.questionId);
+                      ApiService.createAnswer(createAnswers);
+                      Navigator.pop(context);
+                    } else {
+                      showError("All fields required!");
+                    }
+                  },
+                  child: Text("Add")),
+              SizedBox(
+                width: 30,
+              ),
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text("Cancel"))
+            ],
           ),
         ],
       ),
