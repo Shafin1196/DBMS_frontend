@@ -41,7 +41,8 @@ class _AuthState extends State<Auth> with SingleTickerProviderStateMixin {
         curve: Curves.easeOutSine,
       ),
     );
-    _slideAnimation = Tween<Offset>(begin: Offset(0, 1), end: Offset(0, 0)).animate(
+    _slideAnimation =
+        Tween<Offset>(begin: Offset(0, 1), end: Offset(0, 0)).animate(
       CurvedAnimation(
         parent: _controller,
         curve: Curves.fastEaseInToSlowEaseOut,
@@ -77,7 +78,8 @@ class _AuthState extends State<Auth> with SingleTickerProviderStateMixin {
       );
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
-        final LoginResponse loginResponse = LoginResponse.fromJson(responseData);
+        final LoginResponse loginResponse =
+            LoginResponse.fromJson(responseData);
         _showError(loginResponse.message);
         // Save user data locally
         final prefs = await SharedPreferences.getInstance();
@@ -88,24 +90,25 @@ class _AuthState extends State<Auth> with SingleTickerProviderStateMixin {
         await prefs.setString('user_status', loginResponse.user.status);
         await prefs.setInt('user_section', loginResponse.user.section);
         List<Quiz> quizList = await ApiService.quizes(loginResponse);
-        if(loginResponse.user.status=="Teacher"){
-          final Teacher teacher = await ApiService.teacher(loginResponse.user.id);
+        if (loginResponse.user.status == "Teacher") {
+          final Teacher teacher =
+              await ApiService.teacher(loginResponse.user.id);
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => TeacherHomeScreen(user: loginResponse, all_quiz: quizList, teacher: teacher),
+              builder: (context) => TeacherHomeScreen(
+                  user: loginResponse, all_quiz: quizList, teacher: teacher),
             ),
           );
-        }
-        else if(loginResponse.user.status=="Student"){
+        } else if (loginResponse.user.status == "Student") {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => StudentHomeScreen(user: loginResponse, all_quiz: quizList),
+              builder: (context) =>
+                  StudentHomeScreen(user: loginResponse, all_quiz: quizList),
             ),
           );
         }
-        
       } else {
         _showError("Invalid email or password!");
       }
@@ -203,27 +206,31 @@ class _AuthState extends State<Auth> with SingleTickerProviderStateMixin {
                                   ),
                                   onPressed: () {
                                     setState(() {
-                                      _isPasswordrdVisible = !_isPasswordrdVisible;
+                                      _isPasswordrdVisible =
+                                          !_isPasswordrdVisible;
                                     });
                                   },
                                 ),
                               ),
                             ),
                             SizedBox(height: 16),
-                            ElevatedButton(
-                              onPressed: _submit,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.amberAccent,
-                              ),
-                              child: Text(
-                                "Log in",
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.scrim,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
+                            isLoading
+                                ? CircularProgressIndicator() // Show loading indicator
+                                : ElevatedButton(
+                                    onPressed: _submit,
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.amberAccent,
+                                    ),
+                                    child: Text(
+                                      "Log in",
+                                      style: TextStyle(
+                                        color:
+                                            Theme.of(context).colorScheme.scrim,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
                           ],
                         ),
                       ),
