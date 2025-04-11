@@ -2,6 +2,9 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:quiz_diu/widgets/models.dart';
 import 'package:quiz_diu/widgets/quiz_models.dart';
+import 'package:quiz_diu/widgets/teacher.dart';
+import 'package:quiz_diu/widgets/student.dart';
+
 
 class ApiService {
   static Future<List<Quiz>> quizes(LoginResponse user) async {
@@ -209,4 +212,39 @@ class ApiService {
       throw Exception('API Error: $error');
     }
   }
+    static Future<void> deleteQuiz(int quizId) async {
+    final response = await http.delete(
+      Uri.parse("https://shafin1196.pythonanywhere.com/api/quiz/$quizId/"),
+      headers: {"Content-Type": "application/json"},
+    );
+
+    if (response.statusCode != 204) {
+      throw Exception("Failed to delete quiz");
+    }
+  }
+// static Future<void> deleteQuiz(int quizId) async {
+//   try {
+//     print("Deleting quiz with ID: $quizId"); // Log the quizId
+//     final response = await http.delete(
+//       Uri.parse("https://shafin1196.pythonanywhere.com/api/quiz/$quizId/"),
+//       headers: {
+//         "Content-Type": "application/json",
+//         // Add the Authorization header if required
+//         "Authorization": "Bearer YOUR_TOKEN_HERE",
+//       },
+//     );
+
+//     if (response.statusCode != 204) { // 204 indicates successful deletion
+//       print("Error: ${response.statusCode} - ${response.body}"); // Log the error
+//       throw Exception("Failed to delete quiz");
+//     }
+
+//     print("Quiz deleted successfully!"); // Log success
+//   } catch (error) {
+//    // print("Exception occurred while deleting quiz: $error"); // Log the exception
+//     throw Exception("Failed to delete quiz: $error");
+//   }
+// }
+
 }
+

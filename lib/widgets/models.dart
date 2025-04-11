@@ -18,8 +18,20 @@ class User {
   final String email;
   final String status;
   final int section;
+  final int quizzesAssigned; // For students
+  final int coursesAssigned; // For teachers
+  final int quizzesCreated;
 
-  User({required this.id,required this.name, required this.email, required this.status,required this.section});
+  User({
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.status,
+    required this.section,
+    this.quizzesAssigned = 0,
+    this.coursesAssigned = 0,
+    this.quizzesCreated = 0,
+  });
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
@@ -28,7 +40,9 @@ class User {
       email: json['email'],
       status: json['status'],
       section: json['section'],
+      quizzesAssigned: json['quizzesAssigned'] ?? 0,
+      coursesAssigned: json['coursesAssigned'] ?? 0,
+      quizzesCreated: json['quizzesCreated'] ?? 0,
     );
   }
 }
-

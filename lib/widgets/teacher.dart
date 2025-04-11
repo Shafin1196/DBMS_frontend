@@ -9,13 +9,18 @@ import 'package:quiz_diu/widgets/auth.dart';
 import 'package:quiz_diu/widgets/models.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:quiz_diu/widgets/profile.dart';
+import 'package:quiz_diu/widgets/ApiService/api.dart';
+
 
 class TeacherHomeScreen extends StatefulWidget {
-  const TeacherHomeScreen(
-      {super.key,
-      required this.user,
-      required this.all_quiz,
-      required this.teacher});
+  const TeacherHomeScreen({
+    super.key,
+    required this.user,
+    required this.all_quiz,
+    required this.teacher,
+  });
+
   final LoginResponse user;
   final Teacher teacher;
   final List<Quiz> all_quiz;
@@ -25,6 +30,7 @@ class TeacherHomeScreen extends StatefulWidget {
 }
 
 class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
+  // Add a new quiz to the list
   void _addQuiz(Quiz quiz) {
     setState(() {
       widget.all_quiz.add(quiz);
@@ -32,6 +38,7 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
     });
   }
 
+  // Show the Add Quiz overlay
   void _overLay() {
     showModalBottomSheet(
       isScrollControlled: true,
@@ -45,13 +52,58 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
     );
   }
 
+  // Show confirmation dialog before deleting a quiz
+  void _confirmDelete(BuildContext context, int quizId, int index) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          "Delete Quiz",
+          style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+        ),
+        content: Text("Are you sure you want to delete this quiz?"),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close dialog
+            },
+            child: Text("Cancel"),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.of(context).pop(); // Close dialog
+              await _deleteQuiz(quizId, index);
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: Text("Delete"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Delete a quiz and update the UI
+Future<void> _deleteQuiz(int quizId, int index) async {
+  try {
+    await ApiService.deleteQuiz(quizId);
+    setState(() {
+      widget.all_quiz.removeAt(index); // Remove quiz from the list
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Quiz deleted successfully!")),
+    );
+  } catch (error) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(" ${error.toString()}")),
+    );
+    print("Error deleting quiz: $error"); // Log the error for debugging
+  }
+}
   @override
   void initState() {
     super.initState();
     widget.all_quiz.sort((a, b) => b.quizId.compareTo(a.quizId));
   }
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -62,48 +114,54 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            // Header Row
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(width: 10),
-                CircleAvatar(
-                  backgroundColor: Colors.yellow,
-                  child: Icon(
-                    FontAwesomeIcons.userPen,
+                IconButton(
+                  icon: Icon(
+                    FontAwesomeIcons.user,
                     size: 25,
                     color: const Color.fromARGB(255, 10, 10, 8),
                   ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProfileScreen(user: widget.user),
+                      ),
+                    );
+                  },
                 ),
-                SizedBox(
-                  width: 5,
-                ),
+                SizedBox(width: 5),
                 Expanded(
                   flex: 6,
                   child: Text(
                     widget.user.user.name,
                     style: GoogleFonts.permanentMarker(
-                        fontSize: 25, fontWeight: FontWeight.bold),
+                        fontSize: 25, fontWeight: FontWeight.bold,),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),
                 ),
                 Spacer(),
                 CircleAvatar(
-                  backgroundColor: Colors.yellow,
+                  //backgroundColor: const Color.fromARGB(255, 201, 200, 195),
                   child: IconButton(
                     onPressed: () async {
                       final prefs = await SharedPreferences.getInstance();
                       await prefs.clear();
-                      // ignore: use_build_context_synchronously
                       imageCache.clear();
-                      // ignore: use_build_context_synchronously
                       Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Auth(
-                                    message: "log out successfully!",
-                                  )));
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Auth(
+                            message: "Log out successfully!",
+                          ),
+                        ),
+                      );
                     },
                     icon: Icon(
                       FontAwesomeIcons.signOutAlt,
@@ -115,6 +173,7 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
                 SizedBox(width: 10),
               ],
             ),
+            // Quiz List
             Expanded(
               child: Container(
                 margin: EdgeInsets.only(top: 20),
@@ -142,9 +201,7 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
                               style: GoogleFonts.roboto(
                                   fontSize: 20, fontWeight: FontWeight.bold),
                             ),
-                            SizedBox(
-                              height: 30,
-                            ),
+                            SizedBox(height: 30),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -180,6 +237,7 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
                     : ListView.builder(
                         itemCount: widget.all_quiz.length,
                         itemBuilder: (context, index) {
+                          final quiz = widget.all_quiz[index];
                           return Card(
                             borderOnForeground: false,
                             elevation: 10,
@@ -188,59 +246,63 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20)),
                             child: ListTile(
-                              title: Row(
-                                children: [
-                                  Expanded(
-                                      child: Text(
-                                    widget.all_quiz[index].quizName,
-                                    style: GoogleFonts.roboto(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
-                                  )),
-                                ],
+                              title: Text(
+                                quiz.quizName,
+                                style: GoogleFonts.roboto(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
                               ),
                               subtitle: Row(
                                 children: [
                                   Expanded(
-                                      child: Text(
-                                    widget.all_quiz[index].course.courseName,
-                                    style: cardTextStyle,
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
-                                  )),
+                                    child: Text(
+                                      quiz.course.courseName,
+                                      style: cardTextStyle,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                    ),
+                                  ),
                                   Spacer(),
                                   Expanded(
-                                      child: Text(
-                                    widget.all_quiz[index].section.sectionName,
-                                    style: cardTextStyle,
-                                  )),
+                                    child: Text(
+                                      quiz.section.sectionName,
+                                      style: cardTextStyle,
+                                    ),
+                                  ),
                                 ],
                               ),
-                              trailing: IconButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    icon: Icon(Icons.delete, color: Colors.red),
+                                    onPressed: () {
+                                      _confirmDelete(context, quiz.quizId, index);
+                                    },
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
                                           builder: (context) => EditQuiz(
-                                                quiz: widget.all_quiz[index],
-                                              )));
-                                },
-                                icon: Icon(
-                                  FontAwesomeIcons.edit,
-                                  size: 30,
-                                  color: Colors.amberAccent.shade700,
-                                ),
+                                            quiz: quiz,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    icon: Icon(
+                                      FontAwesomeIcons.edit,
+                                      size: 30,
+                                      color: Colors.amberAccent.shade700,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          )
-                              .animate()
-                              .fadeIn(
-                                  duration: 500.ms,
-                                  curve: Curves.easeIn) // Fade-in animation
-                              .slide(
-                                  begin: Offset(1, 0),
-                                  end: Offset(0, 0),
-                                  duration: 500.ms);
+                          ).animate().fadeIn(duration: 500.ms).slide(
+                              begin: Offset(1, 0),
+                              end: Offset(0, 0),
+                              duration: 500.ms);
                         },
                       ),
               ),

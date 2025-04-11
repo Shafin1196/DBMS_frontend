@@ -69,7 +69,7 @@ class _AuthState extends State<Auth> with SingleTickerProviderStateMixin {
     setState(() {
       isLoading = true;
     });
-
+    // Perform login request
     try {
       final response = await http.post(
         Uri.parse("https://shafin1196.pythonanywhere.com/api/login/"),

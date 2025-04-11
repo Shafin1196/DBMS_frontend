@@ -11,6 +11,7 @@ import 'package:quiz_diu/widgets/studentResult.dart';
 import 'package:quiz_diu/widgets/timer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:quiz_diu/widgets/auth.dart';
+import 'package:quiz_diu/widgets/profile.dart';
 
 class StudentHomeScreen extends StatefulWidget {
   const StudentHomeScreen(
@@ -41,7 +42,6 @@ class _StudentState extends State<StudentHomeScreen> {
       all_quiz.sort((a, b) => b.quizId.compareTo(a.quizId));
       isRefreshing = false;
     });
-
   }
 
   @override
@@ -57,11 +57,27 @@ class _StudentState extends State<StudentHomeScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(width: 10),
-                CircleAvatar(
-                  backgroundColor: Colors.yellow,
-                  child: Icon(Icons.person,
-                      size: 25, color: const Color.fromARGB(255, 10, 10, 8)),
+                IconButton(
+                  icon: Icon(
+                    FontAwesomeIcons.user,
+                    size: 25,
+                    color: const Color.fromARGB(255, 10, 10, 8),
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProfileScreen(user: widget.user),
+                      ),
+                    );
+                  },
                 ),
+                // CircleAvatar(
+
+                //   backgroundColor: Colors.yellow,
+                //   // child: Icon(Icons.person,
+                //   //     size: 25, color: const Color.fromARGB(255, 10, 10, 8)),
+                // ),
                 SizedBox(width: 5),
                 Expanded(
                   flex: 8,
@@ -75,7 +91,7 @@ class _StudentState extends State<StudentHomeScreen> {
                 ),
                 Spacer(),
                 CircleAvatar(
-                  backgroundColor: Colors.yellow,
+                  //backgroundColor: Colors.yellow,
                   child: IconButton(
                     onPressed: () async {
                       final prefs = await SharedPreferences.getInstance();
