@@ -5,7 +5,6 @@ import 'package:quiz_diu/widgets/quiz_models.dart';
 import 'package:quiz_diu/widgets/teacher.dart';
 import 'package:quiz_diu/widgets/student.dart';
 
-
 class ApiService {
   static Future<List<Quiz>> quizes(LoginResponse user) async {
     try {
@@ -188,6 +187,7 @@ class ApiService {
       throw Exception('API Error: $error');
     }
   }
+
 //get result
   static Future<dynamic> getResult(int studentId, int quizId) async {
     print("s-id:${studentId}");
@@ -201,50 +201,74 @@ class ApiService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         return data;
-      } 
-      else if(response.statusCode==404){
+      } else if (response.statusCode == 404) {
         return false;
-      }
-      else {
+      } else {
         throw Exception('Failed to fetch question_id: ${response.statusCode}');
       }
     } catch (error) {
       throw Exception('API Error: $error');
     }
   }
-    static Future<void> deleteQuiz(int quizId) async {
-    final response = await http.delete(
-      Uri.parse("https://shafin1196.pythonanywhere.com/api/quiz/$quizId/"),
-      headers: {"Content-Type": "application/json"},
-    );
 
-    if (response.statusCode != 204) {
-      throw Exception("Failed to delete quiz");
+  static Future<void> deleteQuiz(int quizId) async {
+    final url = Uri.parse(
+        'https://shafin1196.pythonanywhere.com/api/all/quiz/$quizId/');
+
+    try {
+      final response = await http.delete(url);
+
+      if (response.statusCode == 204) {
+        // 204 No Content indicates successful deletion
+        print('Quiz deleted successfully.');
+      } else {
+        // Handle errors
+        print('Failed to delete quiz. Status code: ${response.statusCode}');
+        print('Response body: ${response.body}');
+      }
+    } catch (e) {
+      // Handle exceptions
+      print('Error occurred: $e');
     }
   }
-// static Future<void> deleteQuiz(int quizId) async {
-//   try {
-//     print("Deleting quiz with ID: $quizId"); // Log the quizId
-//     final response = await http.delete(
-//       Uri.parse("https://shafin1196.pythonanywhere.com/api/quiz/$quizId/"),
-//       headers: {
-//         "Content-Type": "application/json",
-//         // Add the Authorization header if required
-//         "Authorization": "Bearer YOUR_TOKEN_HERE",
-//       },
-//     );
+  static Future<void> deleteQuestion(int questionId) async {
+    final url = Uri.parse(
+        'https://shafin1196.pythonanywhere.com/api/all/question/$questionId/');
 
-//     if (response.statusCode != 204) { // 204 indicates successful deletion
-//       print("Error: ${response.statusCode} - ${response.body}"); // Log the error
-//       throw Exception("Failed to delete quiz");
-//     }
+    try {
+      final response = await http.delete(url);
 
-//     print("Quiz deleted successfully!"); // Log success
-//   } catch (error) {
-//    // print("Exception occurred while deleting quiz: $error"); // Log the exception
-//     throw Exception("Failed to delete quiz: $error");
-//   }
-// }
+      if (response.statusCode == 204) {
+        // 204 No Content indicates successful deletion
+        print('Question deleted successfully.');
+      } else {
+        // Handle errors
+        print('Failed to delete question. Status code: ${response.statusCode}');
+        print('Response body: ${response.body}');
+      }
+    } catch (e) {
+      // Handle exceptions
+      print('Error occurred: $e');
+    }
+  }
+  static Future<void> deleteAnswer(int answerId) async {
+    final url = Uri.parse(
+        'https://shafin1196.pythonanywhere.com/api/all/answer/$answerId/');
 
+    try {
+      final response = await http.delete(url);
+
+      if (response.statusCode == 204) {
+        // 204 No Content indicates successful deletion
+        print('Answer deleted successfully.');
+      } else {
+        // Handle errors
+        print('Failed to delete answer. Status code: ${response.statusCode}');
+        print('Response body: ${response.body}');
+      }
+    } catch (e) {
+      // Handle exceptions
+      print('Error occurred: $e');
+    }
+  }
 }
-

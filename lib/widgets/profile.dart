@@ -13,9 +13,18 @@ class ProfileScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           "Profile",
-          style: GoogleFonts.roboto(fontSize: 24, fontWeight: FontWeight.bold),
+          style: GoogleFonts.permanentMarker(fontSize: 24, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Theme.of(context).colorScheme.secondary,
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        elevation: 10,
+        shadowColor: Colors.black,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

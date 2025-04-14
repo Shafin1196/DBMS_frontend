@@ -58,12 +58,17 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(
-          "Delete Quiz",
-          style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+          "Delete Quiz!",
+          style: GoogleFonts.roboto(color: Colors.red, fontWeight: FontWeight.bold),
         ),
-        content: Text("Are you sure you want to delete this quiz?"),
+        elevation: 10,
+        shadowColor: Colors.red,
+        content: Text("Are you sure you want to delete this quiz?",style:GoogleFonts.roboto(
+          color: Colors.black54,
+          fontWeight: FontWeight.bold,
+        ) ,),
         actions: [
-          TextButton(
+          ElevatedButton(
             onPressed: () {
               Navigator.of(context).pop(); // Close dialog
             },
@@ -274,7 +279,7 @@ Future<void> _deleteQuiz(int quizId, int index) async {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   IconButton(
-                                    icon: Icon(Icons.delete, color: Colors.red),
+                                    icon: Icon(FontAwesomeIcons.trash, color: Colors.red,size: 30,),
                                     onPressed: () {
                                       _confirmDelete(context, quiz.quizId, index);
                                     },

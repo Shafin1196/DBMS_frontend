@@ -129,11 +129,37 @@ class _EditQuizState extends State<EditQuiz> {
                                       child: Column(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
-                                          Text(
-                                            widget.quiz.quizQuestions[index].question,
-                                            style: GoogleFonts.roboto(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Expanded(
+                                                flex: 10,
+                                                child: Text(
+                                                  widget.quiz
+                                                      .quizQuestions[index]
+                                                      .question,
+                                                  style: GoogleFonts.roboto(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+
+                                              ),
+                                              Spacer(),
+                                              IconButton(
+                                                onPressed: () {
+                                                  // Delete question logic here
+                                                  // setState(() {
+                                                  //   widget.quiz.quizQuestions.removeAt(index);
+                                                  // });
+                                                },
+                                                icon: Icon(FontAwesomeIcons.trash,
+                                                  color: Colors.red,
+                                                  size: 25,
+                                                  ),
+                                              ),
+                                            ],
                                           ),
                                           SizedBox(height: 10),
                                           ...widget.quiz.quizQuestions[index]
@@ -178,6 +204,12 @@ class _EditQuizState extends State<EditQuiz> {
                                                       : Colors.red,
                                                   size: 25,
                                                 ),
+                                                SizedBox(width: 10),
+                                                Icon(FontAwesomeIcons.trashCan,
+                                                  color: Colors.red,
+                                                  size: 25,
+                                                  ),
+                                                SizedBox(width: 5),
                                                 
                                               ],
                                             );
