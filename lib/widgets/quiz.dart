@@ -146,7 +146,7 @@ class _QuizScreenState extends State<QuizScreen> {
                               child: Text(
                                 (index + 1).toString(),
                                 style: GoogleFonts.roboto(
-                                    fontSize: 25, fontWeight: FontWeight.bold,color: Colors.white),
+                                    fontSize: 20, fontWeight: FontWeight.bold,color: Colors.white),
                               ),
                             ),
                             QuestionCard(quizQuestion: widget.quiz.quizQuestions[index], question_index: index,addAnswer: addAnswer,),

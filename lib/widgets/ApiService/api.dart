@@ -2,8 +2,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:quiz_diu/widgets/models.dart';
 import 'package:quiz_diu/widgets/quiz_models.dart';
-import 'package:quiz_diu/widgets/teacher.dart';
-import 'package:quiz_diu/widgets/student.dart';
 
 class ApiService {
   static Future<List<Quiz>> quizes(LoginResponse user) async {
@@ -55,8 +53,24 @@ class ApiService {
     }
   }
 
+   static Future<String> getSection(int id)async{
+    try {
+      final response = await http.get(
+        Uri.parse("https://shafin1196.pythonanywhere.com/api/all/section/$id"),
+        headers: {"Content-Type": "application/json"},
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['section_name'];
+      } else {
+        throw Exception('Failed to load section: ${response.statusCode}');
+      }
+    } catch (error) {
+      throw Exception('API Error: $error');
+    }
+   }
   // create new quiz
-  static Future<Quiz> createQuiz(CreateQuiz quiz) async {
+  static Future<void> createQuiz(CreateQuiz quiz) async {
     try {
       final response = await http.post(
         Uri.parse("https://shafin1196.pythonanywhere.com/api/create-quiz/"),
@@ -64,7 +78,7 @@ class ApiService {
         body: jsonEncode(quiz.toJson()),
       );
       if (response.statusCode == 201) {
-        return Quiz.fromJson(jsonDecode(response.body));
+        print("Successfully created quiz");
       } else {
         throw Exception('Failed to create quiz: ${response.statusCode}');
       }
@@ -74,7 +88,7 @@ class ApiService {
   }
 
   //create new questions
-  static Future<QuizQuestion> createQuestion(CreateQuestion question) async {
+  static Future<void> createQuestion(CreateQuestion question) async {
     try {
       final response = await http.post(
         Uri.parse("https://shafin1196.pythonanywhere.com/api/create-question/"),
@@ -82,7 +96,7 @@ class ApiService {
         body: jsonEncode(question.toJson()),
       );
       if (response.statusCode == 201) {
-        return QuizQuestion.fromJson(jsonDecode(response.body));
+        print("Successfully created question");
       } else {
         throw Exception('Failed to create questions: ${response.statusCode}');
       }
@@ -92,7 +106,7 @@ class ApiService {
   }
 
   // create answer
-  static Future<QuizAnswer> createAnswer(CreateAnswer answer) async {
+  static Future<void> createAnswer(CreateAnswer answer) async {
     try {
       final response = await http.post(
         Uri.parse("https://shafin1196.pythonanywhere.com/api/create-answer/"),
@@ -100,7 +114,7 @@ class ApiService {
         body: jsonEncode(answer.toJson()),
       );
       if (response.statusCode == 201) {
-        return QuizAnswer.fromJson(jsonDecode(response.body));
+        print("Successfully created answer");
       } else {
         throw Exception('Failed to create answers: ${response.statusCode}');
       }

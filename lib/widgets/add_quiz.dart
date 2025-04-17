@@ -197,8 +197,17 @@ class _AddQuizState extends State<AddQuiz> {
             children: [
               ElevatedButton(
                 onPressed: () async {
-                  print(isValid());
                   if(isValid()){
+                    final createQuiz=CreateQuiz(
+                    course: widget.teacher.courses.firstWhere((course) => course.courseName == _selectedCourse).id,
+                    section: widget.teacher.courses.firstWhere((course) => course.courseName == _selectedCourse).id,
+                    teacher: widget.teacher.id,
+                    quizName: _quizName.text,
+                    startTime: DateTime.parse(_startTime.text).toIso8601String(),
+                    endTime: DateTime.parse(_endTime.text).toIso8601String(),
+                    totalMarks: int.parse(_totalMarks.text)
+                    );
+                  await ApiService.createQuiz(createQuiz);
                   final newQuiz = Quiz(
                     quizId: await ApiService.getQuizId(),
                     quizName: _quizName.text,
@@ -210,8 +219,7 @@ class _AddQuizState extends State<AddQuiz> {
                     quizQuestions: [],
                     quiz_marks: int.parse(_totalMarks.text)
                   );
-                  final createQuiz=CreateQuiz(course: newQuiz.course.id,section: newQuiz.section.id,teacher: newQuiz.teacher.id,quizName: newQuiz.quizName,startTime: newQuiz.startTime.toIso8601String(),endTime: newQuiz.endTime.toIso8601String(),totalMarks: int.parse(_totalMarks.text));
-                  ApiService.createQuiz(createQuiz);
+                  
                   widget.addQuiz(newQuiz);
                   Navigator.of(context).pop();
                   }

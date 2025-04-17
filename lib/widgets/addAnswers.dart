@@ -94,7 +94,7 @@ class _AddAnswersState extends State<AddAnswers> {
               });
             },
             decoration: const InputDecoration(
-              labelText: "Course",
+              labelText: "Correct?",
               border: OutlineInputBorder(),
             ),
           ),
@@ -108,17 +108,17 @@ class _AddAnswersState extends State<AddAnswers> {
                   onPressed: () async {
                     print(isValid());
                     if (isValid()) {
+                      final createAnswers = CreateAnswer(
+                          answer: _answer.text,
+                          isCorrect: _isCorrect == "True" ? true : false,
+                          question: widget.question.questionId);
+                      await ApiService.createAnswer(createAnswers);
                       final quizAnswer = QuizAnswer(
                           answerId: await ApiService.getAnswerId(),
                           answer: _answer.text,
                           isCorrect: _isCorrect == "True" ? true : false,
                           question: widget.question.questionId);
                       widget.addAnswer(quizAnswer, widget.index);
-                      final createAnswers = CreateAnswer(
-                          answer: _answer.text,
-                          isCorrect: _isCorrect == "True" ? true : false,
-                          question: widget.question.questionId);
-                      ApiService.createAnswer(createAnswers);
                       Navigator.pop(context);
                     } else {
                       showError("All fields required!");

@@ -69,11 +69,11 @@ class _AddquestionsState extends State<Addquestions> {
             children: [
               ElevatedButton(onPressed: () async{
                 if(isValid()){
+                final createQuestion =CreateQuestion(question: enteredQuestion.text, quiz: widget.quiz.quizId);
+                await ApiService.createQuestion(createQuestion);
                 List<QuizAnswer> answers=[];
                 final QuizQuestion question=QuizQuestion(questionId: await ApiService.getQuestionId(), question: enteredQuestion.text, quiz: widget.quiz.quizId, quizQuestionAnswers: answers );
                 widget.addQuestion(question);
-                final createQuestion =CreateQuestion(question: enteredQuestion.text, quiz: widget.quiz.quizId);
-                ApiService.createQuestion(createQuestion);
                 Navigator.of(context).pop();
                 }
                 else{

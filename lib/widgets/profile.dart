@@ -26,61 +26,55 @@ class ProfileScreen extends StatelessWidget {
         elevation: 10,
         shadowColor: Colors.black,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Common Profile Details
-            CircleAvatar(
-              radius: 50,
-              backgroundColor: Colors.amber,
-              child: Icon(
-                Icons.person,
-                size: 50,
-                color: const Color.fromARGB(255, 17, 15, 15),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Theme.of(context).colorScheme.primaryContainer,
+              Theme.of(context).colorScheme.primary,
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start ,
+            children: [
+              // Common Profile Details
+              SizedBox(height: 26),
+              CircleAvatar(
+                radius: 70,
+                backgroundColor: Colors.amber,
+                child: Icon(
+                  Icons.person,
+                  size: 80,
+                  color: const Color.fromARGB(255, 17, 15, 15),
+                ),
               ),
-            ),
-            SizedBox(height: 16),
-            Text(
-              "Name: ${user.user.name}",
-              style: GoogleFonts.roboto(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white,),
-            ),
-            SizedBox(height: 8),
-            Text(
-              "Email: ${user.user.email}",
-              style: GoogleFonts.roboto(fontSize: 16,color: Colors.white,),
-            ),
-            SizedBox(height: 8),
-            Text(
-              "Role: ${user.user.status}",
-              style: GoogleFonts.roboto(fontSize: 16,color: Colors.white,),
-            ),
-            SizedBox(height: 16),
-
-            // Role-Specific Details
-            if (user.user.status == "Student") ...[
-              Text(
-                "Section: ${user.user.section}",
-                style: GoogleFonts.roboto(fontSize: 16, color: Colors.white,),
-              ),
-              SizedBox(height: 8),
-              Text(
-                "Quizzes Assigned: ${user.user.quizzesAssigned}",
-                style: GoogleFonts.roboto(fontSize: 16, color: Colors.white,),
-              ),
-            ] else if (user.user.status == "Teacher") ...[
-              Text(
-                "Courses Assigned: ${user.user.coursesAssigned}",
-                style: GoogleFonts.roboto(fontSize: 16, color: Colors.white,),
-              ),
-              SizedBox(height: 8),
-              Text(
-                "Quizzes Created: ${user.user.quizzesCreated}",
-                style: GoogleFonts.roboto(fontSize: 16, color: Colors.white,),
+              SizedBox(height: 16),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Name: ${user.user.name}",
+                    style: GoogleFonts.roboto(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    "Email: ${user.user.email}",
+                    style: GoogleFonts.roboto(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    "Status: ${user.user.status}",
+                    style: GoogleFonts.roboto(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                ],
               ),
             ],
-          ],
+          ),
         ),
       ),
     );

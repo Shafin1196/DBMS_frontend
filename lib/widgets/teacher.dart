@@ -76,8 +76,8 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
           ),
           ElevatedButton(
             onPressed: () async {
-              Navigator.of(context).pop(); // Close dialog
               await _deleteQuiz(quizId, index);
+              Navigator.of(context).pop(); // Close dialog
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             child: Text("Delete"),
@@ -243,6 +243,7 @@ Future<void> _deleteQuiz(int quizId, int index) async {
                         itemCount: widget.all_quiz.length,
                         itemBuilder: (context, index) {
                           final quiz = widget.all_quiz[index];
+                          // print(quiz.quizId);
                           return Card(
                             borderOnForeground: false,
                             elevation: 10,
@@ -286,6 +287,7 @@ Future<void> _deleteQuiz(int quizId, int index) async {
                                   ),
                                   IconButton(
                                     onPressed: () {
+                                      print("Quiz ID: ${quiz.quizId}");
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
