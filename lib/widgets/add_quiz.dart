@@ -200,7 +200,7 @@ class _AddQuizState extends State<AddQuiz> {
                   if(isValid()){
                     final createQuiz=CreateQuiz(
                     course: widget.teacher.courses.firstWhere((course) => course.courseName == _selectedCourse).id,
-                    section: widget.teacher.courses.firstWhere((course) => course.courseName == _selectedCourse).id,
+                    section: widget.teacher.sections.firstWhere((section) => section.sectionName == _selectedSection).id,
                     teacher: widget.teacher.id,
                     quizName: _quizName.text,
                     startTime: DateTime.parse(_startTime.text).toIso8601String(),
