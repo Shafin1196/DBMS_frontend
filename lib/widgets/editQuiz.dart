@@ -166,6 +166,22 @@ class _EditQuizState extends State<EditQuiz> {
                       maxLines: 1,
                     ),
                   ),
+                  SizedBox(width: 10),
+                  ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.yellow,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: Text(
+                      "Result",
+                      style: GoogleFonts.permanentMarker(
+                          fontSize: 20, fontWeight: FontWeight.bold,color: Colors.black),
+                    ),
+                  ),
+                  SizedBox(width: 10),
                 ],
               ),
               SizedBox(height: 20),
